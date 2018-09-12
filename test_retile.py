@@ -1,6 +1,4 @@
-from retile import test_files as f
-from retile.mutate import test_common as c, test_metadata as m
-
+from retile import test_files as f, test_common as c, test_metadata as m
 
 def run_tests():
     c.run_tests()
