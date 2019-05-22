@@ -2,7 +2,7 @@ from os import getcwd
 from os.path import join
 from shutil import rmtree, move
 
-from retile import mutate, files
+from retile import release, files
 from retile.metadata import Metadata
 from retile.release import Release
 from retile.common import add_label_to_filename

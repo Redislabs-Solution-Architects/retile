@@ -15,10 +15,13 @@ class Release(object):
 
         _release_file = source.split('.')
         _release_file.pop()
-        release_filename =  '.'.join(_release_file) + '.tgz'
+        #release_filename =  '.'.join(_release_file) + '.tgz'
+        # this only works for tile version 5.4.22000163, should not be a long term fix
+	release_filename =  'redislabs-service-broker-1.0.13.tgz'
 
         release_work_dir = join(self.work_dir, 'releases')
         release_filepath = join(release_work_dir, release_filename)
+        
         files.untar(release_filepath, release_work_dir)
         
         jobs_work_dir = join(release_work_dir, 'jobs')
