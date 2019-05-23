@@ -2,7 +2,7 @@ from os import getcwd
 from os.path import join
 from shutil import rmtree, move
 
-from retile import release, files
+from retile import files
 from retile.metadata import Metadata
 from retile.release import Release
 from retile.common import add_label_to_filename
@@ -18,13 +18,8 @@ def retile(source, work_dir, **kwargs):
     files.create_path(work_dir)
     print 'Extracting ' + source + ' to ' + work_dir
     files.unzip(source, work_dir)
-
-    if 'service-broker' not in source:
-        slug = 'redis-enterprise'
-    else:
-        slug = 'redislabs-service-broker'
        
-    Metadata(work_dir, **kwargs).mutate(slug)
+    Metadata(work_dir, **kwargs).mutate()
     Release(work_dir, **kwargs).mutate(source)
 
     _rebuild_tile(original_context_path, source, work_dir, **kwargs)

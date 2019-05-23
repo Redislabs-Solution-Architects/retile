@@ -18,14 +18,8 @@ class Metadata(object):
 
         self._mutate_metadata(metadata)
 
-        export_metadata_file = join(self.work_dir, 'metadata', 'metadata-' + self.label + '.yml')
-
-        print 'Exporting Mutated Metadata file'
-        files.export_yaml(export_metadata_file, metadata)
-        print 'Eradicating Old Metadata '+metadata_file
-        unlink(metadata_file)
-
-    
+        print 'Saving Mutated Metadata file'
+        files.export_yaml(metadata_file, metadata)
 
     def _mutate_metadata(self, metadata):
         '''Given a parsed metadata/metadata.yml file, modify it to allow for the tile to run next to another one'''
