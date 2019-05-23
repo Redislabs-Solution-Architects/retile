@@ -9,18 +9,16 @@ class Metadata(object):
         self.work_dir = work_dir
         self.label = label
 
-    def mutate(self, slug):
-        # overwrite the metadata file slug here (this only works for tile version 5.4.22000163, should not be a long term fix)
-        slug = 'metadata' 
-        
-        metadata_file = join(self.work_dir, 'metadata', slug + '.yml')
+    def mutate(self):
+       
+        metadata_file = join(self.work_dir, 'metadata', 'metadata.yml')
         print 'Importing ' + metadata_file
         metadata = files.import_yaml(metadata_file)
         print 'Mutating Metadata'
 
         self._mutate_metadata(metadata)
 
-        export_metadata_file = join(self.work_dir, 'metadata', slug + '-' + self.label + '.yml')
+        export_metadata_file = join(self.work_dir, 'metadata', 'metadata-' + self.label + '.yml')
 
         print 'Exporting Mutated Metadata file'
         files.export_yaml(export_metadata_file, metadata)
@@ -30,7 +28,7 @@ class Metadata(object):
     
 
     def _mutate_metadata(self, metadata):
-        '''Given a parsed metadata/redis-enterprise.yml file, modify it to allow for the tile to run next to another one'''
+        '''Given a parsed metadata/metadata.yml file, modify it to allow for the tile to run next to another one'''
         
         print 'Changing tile name from ' + metadata['name'] + ' to ' + metadata['name'] + '-' + self.label
         metadata['name'] = metadata['name'] + '-' + self.label
