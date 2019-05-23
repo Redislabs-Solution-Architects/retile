@@ -1,6 +1,7 @@
 from os import getcwd, chdir, unlink
-from os.path import join
+from os.path import join, split
 from hashlib import sha256
+from glob import glob
 
 from retile import files
 from retile.common import add_label_to_filename
@@ -15,12 +16,11 @@ class Release(object):
 
         _release_file = source.split('.')
         _release_file.pop()
-        #release_filename =  '.'.join(_release_file) + '.tgz'
-        # this only works for tile version 5.4.22000163, should not be a long term fix
-	release_filename =  'redislabs-service-broker-1.0.13.tgz'
-
+       
+       ## We have to find the release file since the version will change as time goes on
         release_work_dir = join(self.work_dir, 'releases')
-        release_filepath = join(release_work_dir, release_filename)
+        release_filepath = glob(join(release_work_dir, 'redis*'))[0]
+        release_filename = split(release_filepath)[-1]
         
         files.untar(release_filepath, release_work_dir)
         
