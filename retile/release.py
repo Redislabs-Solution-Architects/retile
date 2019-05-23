@@ -39,7 +39,7 @@ class Release(object):
         print 'Mutating Service Broker Config'
         files.untar(service_broker_job_filepath, jobs_work_dir)
 
-        sb_config_template_filepath = join(jobs_work_dir, 'templates', 'config.yml.erb')
+        sb_config_template_filepath = join(jobs_work_dir, 'job.MF')
         sb_config_template = files.read_contents(sb_config_template_filepath)
         sb_config_template = sb_config_template.replace('redislabs', 'redislabs-' + self.label)
         sb_config_template = sb_config_template.replace('6bfa3113-5257-42d3-8ee2-5f28be9335e2', sha256(self.label).hexdigest())
