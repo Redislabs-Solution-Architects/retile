@@ -29,7 +29,7 @@ def retile(source, work_dir, **kwargs):
 
 def _rebuild_tile(original_context_path, source, work_dir, label, **kwargs):
     print 'Creating New Tile'
-    tile_items = ('metadata', 'migrations', 'releases', 'tile-generator')
+    tile_items = ('metadata', 'migrations', 'releases')
     output_file = add_label_to_filename(source, label)
     files.zip_items(output_file, tile_items)
     move(join(work_dir, output_file), join(original_context_path, output_file))
