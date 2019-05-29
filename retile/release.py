@@ -1,6 +1,7 @@
-from os import getcwd, chdir, unlink
-from os.path import join
+from os import getcwd, chdir, unlink, rename
+from os.path import join, split
 from hashlib import sha256
+from glob import glob
 
 from retile import files
 from retile.common import add_label_to_filename
@@ -15,10 +16,12 @@ class Release(object):
 
         _release_file = source.split('.')
         _release_file.pop()
-        release_filename =  '.'.join(_release_file) + '.tgz'
-
+       
+       ## We have to find the release file since the version will change as time goes on
         release_work_dir = join(self.work_dir, 'releases')
-        release_filepath = join(release_work_dir, release_filename)
+        release_filepath = glob(join(release_work_dir, 'redis*'))[0]
+        release_filename = split(release_filepath)[-1]
+        
         files.untar(release_filepath, release_work_dir)
         
         jobs_work_dir = join(release_work_dir, 'jobs')
@@ -36,12 +39,22 @@ class Release(object):
         print 'Mutating Service Broker Config'
         files.untar(service_broker_job_filepath, jobs_work_dir)
 
+        job_config_template_filepath = join(jobs_work_dir, 'job.MF')
+        job_config_template = files.read_contents(job_config_template_filepath)
+        job_config_template = job_config_template.replace('6bfa3113-5257-42d3-8ee2-5f28be9335e2', sha256(self.label).hexdigest())
+        files.write_contents(job_config_template_filepath, job_config_template)
+
+        ## So if we change the name in the job.MF file it requires that to be the name everywhere, which is a huge can of worms.
+        ## Ultimately, the JOB doesn't need to change - all that needs to happen is the SB app itself just needs to think it's a 
+        ## different name so that when the registrar errand calls it calls itself something different.
+        
         sb_config_template_filepath = join(jobs_work_dir, 'templates', 'config.yml.erb')
         sb_config_template = files.read_contents(sb_config_template_filepath)
-        sb_config_template = sb_config_template.replace('redislabs', 'redislabs-' + self.label)
-        sb_config_template = sb_config_template.replace('6bfa3113-5257-42d3-8ee2-5f28be9335e2', sha256(self.label).hexdigest())
+        slug = "broker.name') %>"
+        sb_config_template = sb_config_template.replace(slug, slug + '-' + self.label)
         files.write_contents(sb_config_template_filepath, sb_config_template)
-
+       
+    
     def _repackage_service_broker(self, jobs_work_dir, service_broker_job_filepath):
         ##Now put it all back together
 
