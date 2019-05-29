@@ -1,4 +1,4 @@
-from os import getcwd, chdir, unlink
+from os import getcwd, chdir, unlink, rename
 from os.path import join, split
 from hashlib import sha256
 from glob import glob
@@ -28,6 +28,15 @@ class Release(object):
         service_broker_job_filepath = join(jobs_work_dir,'redislabs-service-broker.tgz')
 
         self._mutate_service_broker_config(jobs_work_dir, service_broker_job_filepath)
+
+        ## There's now a run script that PAS checks that it matches 
+        ## since we're defining the separation in the job.MF file now 
+        original_path = join(jobs_work_dir, 'templates', 'redislabs-service-broker.sh.erb')
+        new_path = join(jobs_work_dir, 'templates', 'redislabs-' + self.label + '-service-broker.sh.erb')
+        rename(original_path, new_path)
+        unlink(original_path)
+
+
         sha = self._repackage_service_broker(jobs_work_dir, service_broker_job_filepath)
         self._mutate_release_manifest(release_work_dir, sha)
         self._repackage_release(release_work_dir, release_filename, release_filepath)
