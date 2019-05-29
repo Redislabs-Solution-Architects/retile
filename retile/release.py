@@ -57,6 +57,7 @@ class Release(object):
         sb_config_template = files.read_contents(sb_config_template_filepath)
         slug = "broker.name') %>"
         sb_config_template = sb_config_template.replace(slug, slug + '-' + self.label)
+        files.write_contents(sb_config_template_filepath, sb_config_template)
        
         
         
