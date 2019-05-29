@@ -31,10 +31,9 @@ class Release(object):
 
         ## There's now a run script that PAS checks that it matches 
         ## since we're defining the separation in the job.MF file now 
-        original_path = join(jobs_work_dir, 'templates', 'redislabs-service-broker.sh.erb')
-        new_path = join(jobs_work_dir, 'templates', 'redislabs-' + self.label + '-service-broker.sh.erb')
-        rename(original_path, new_path)
-        unlink(original_path)
+        # original_path = join(jobs_work_dir, 'templates', 'redislabs-service-broker.sh.erb')
+        # new_path = join(jobs_work_dir, 'templates', 'redislabs-' + self.label + '-service-broker.sh.erb')
+        # rename(original_path, new_path)
 
 
         sha = self._repackage_service_broker(jobs_work_dir, service_broker_job_filepath)
@@ -48,11 +47,19 @@ class Release(object):
         print 'Mutating Service Broker Config'
         files.untar(service_broker_job_filepath, jobs_work_dir)
 
-        sb_config_template_filepath = join(jobs_work_dir, 'job.MF')
+        job_config_template_filepath = join(jobs_work_dir, 'job.MF')
+        job_config_template = files.read_contents(job_config_template_filepath)
+        #job_config_template = job_config_template.replace('redislabs', 'redislabs-' + self.label)
+        job_config_template = job_config_template.replace('6bfa3113-5257-42d3-8ee2-5f28be9335e2', sha256(self.label).hexdigest())
+        files.write_contents(job_config_template_filepath, job_config_template)
+
+        sb_config_template_filepath = join(jobs_work_dir, 'templates', 'config.yml.erb')
         sb_config_template = files.read_contents(sb_config_template_filepath)
-        sb_config_template = sb_config_template.replace('redislabs', 'redislabs-' + self.label)
-        sb_config_template = sb_config_template.replace('6bfa3113-5257-42d3-8ee2-5f28be9335e2', sha256(self.label).hexdigest())
-        files.write_contents(sb_config_template_filepath, sb_config_template)
+        slug = "broker.name') %>"
+        sb_config_template = sb_config_template.replace(slug, slug + '-' + self.label)
+       
+        
+        
 
     def _repackage_service_broker(self, jobs_work_dir, service_broker_job_filepath):
         ##Now put it all back together
